@@ -7,20 +7,29 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import open from 'open';
 
 // Webpack Configuration
-import webpackConfig from "../../webpack.config.dev";
+import webpackConfig from "../../webpack.config.babel";
 
 // Server Port
 const port = process.env.PORT || 3000;
 
+// Environment 
+const isDevelopment = process.env.NODE_ENV !== 'production';
+console.log('isDevelopmen:',isDevelopment);
+
 // Express app
 const app = express();
+
+// Public 
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Webpack Compiler
 const webpackCompiler = webpack(webpackConfig);
 
-// Webpack Middlewares
-app.use(webpackDevMiddleware(webpackCompiler));
-app.use(webpackHotMiddleware(webpackCompiler));
+if (isDevelopment) {
+  // Webpack Middlewares
+  app.use(webpackDevMiddleware(webpackCompiler));
+  app.use(webpackHotMiddleware(webpackCompiler));
+}
 
 //  Sending all traffic to React
 app.get('*', (req, res) => {
