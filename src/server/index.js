@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000;
 
 // Environment 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-console.log('isDevelopmen:',isDevelopment);
+console.log('isDevelopment:',isDevelopment);
 
 // Express app
 const app = express();

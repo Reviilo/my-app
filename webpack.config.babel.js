@@ -4,6 +4,7 @@ import path from 'path';
 
 // Environment 
 const isDevelopment = process.env.NODE_ENV !== 'production';
+console.log(isDevelopment);
 
 // Paths
 const PATHS = {
@@ -14,7 +15,7 @@ const PATHS = {
 
 const getMode = () => isDevelopment ? 'development' : 'production';
 
-const getDevtool = () => 'ceap-module-eval-source-map';
+const getDevtool = () => 'cheap-module-eval-source-map';
 
 const getEntry = () => {
   const entry = [
@@ -26,33 +27,24 @@ const getEntry = () => {
   }
 
   return entry;
-}
+};
 
 const getOutput = () => ({
   path: PATHS.build,
   publicPath: '/',
-  filename: 'bundle.js'
+  filename: '[name].bundle.js'
 });
 
 const getPlugins = () => {
-  const plugins = [
-  ];
-  
-  if(isDevelopment){
-    plugins.push(
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoEmitOnErrorsPlugin()
-    );
-  }
+  const plugins = [];
 
   return plugins;
-}
+};
 
-const getModule = () => {
-  
+const getModule = () => ({
   rules: [
     {
-      test: /\.js?$/,
+      test: /\.(js|jsx)?$/,
       loaders: ['babel-loader'],
       include: PATHS.src
     },
@@ -65,8 +57,19 @@ const getModule = () => {
       loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
     }
   ]
+});
 
-}
+const getOptimization = () => ({
+  splitChunks: {
+    cacheGroups: {
+      commons: {
+        test: /[\\/]node_modules[\\/]/,
+        name: "vendors",
+        chunks: "all"
+      }
+    }
+  }
+});
 
 // Webpack Config
 export default {
@@ -76,15 +79,5 @@ export default {
   output: getOutput(),
   plugins: getPlugins(),
   module: getModule(),
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          chunks: "all"
-        }
-      }
-    }
-  }
+  optimization: getOptimization()
 };
