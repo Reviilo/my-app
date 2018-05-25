@@ -8,9 +8,9 @@ console.log(isDevelopment);
 
 // Paths
 const PATHS = {
-  index: path.join(__dirname, 'src/index'),
-  build: path.join(__dirname, 'src/public'),
-  src: path.join(__dirname, 'src')
+  index: path.resolve(__dirname, 'src/index'),
+  build: path.resolve(__dirname, 'src/public'),
+  src: path.resolve(__dirname, 'src')
 };
 
 const getMode = () => isDevelopment ? 'development' : 'production';
@@ -23,7 +23,7 @@ const getEntry = () => {
   ];
 
   if (isDevelopment) {
-    entry.push('webpack-hot-middleware/client?reload=true');
+    entry.push('webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000');
   }
 
   return entry;
@@ -32,11 +32,19 @@ const getEntry = () => {
 const getOutput = () => ({
   path: PATHS.build,
   publicPath: '/',
-  filename: '[name].bundle.js'
+  filename: '[name].bundle.js',
+  hotUpdateChunkFilename: ".hot/[id].[hash].hot-update.js",
+  hotUpdateMainFilename: ".hot/[hash].hot-update.json"
 });
 
 const getPlugins = () => {
-  const plugins = [];
+  const plugins = [
+
+  ];
+
+  if(isDevelopment) {
+    plugins.push(new webpack.HotModuleReplacementPlugin());
+  }
 
   return plugins;
 };
@@ -44,7 +52,7 @@ const getPlugins = () => {
 const getModule = () => ({
   rules: [
     {
-      test: /\.(js|jsx)?$/,
+      test: /\.js?$/,
       loaders: ['babel-loader'],
       include: PATHS.src
     },

@@ -20,14 +20,16 @@ console.log('isDevelopment:',isDevelopment);
 const app = express();
 
 // Public 
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static('../public'));
 
 // Webpack Compiler
 const webpackCompiler = webpack(webpackConfig);
 
 if (isDevelopment) {
   // Webpack Middlewares
-  app.use(webpackDevMiddleware(webpackCompiler));
+  app.use(webpackDevMiddleware(webpackCompiler, {
+    publicPath: webpackConfig.output.publicPath
+  }));
   app.use(webpackHotMiddleware(webpackCompiler));
 }
 
